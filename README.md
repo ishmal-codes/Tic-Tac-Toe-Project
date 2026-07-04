@@ -1,50 +1,42 @@
-# 🎮 Tic-Tac-Toe — Midnight Neon Edition
+# 🎮 Tic-Tac-Toe — Premium Wood Edition
 
-A professional-grade, fully object-oriented Tic-Tac-Toe game built with **Java Swing**, featuring a custom dark-mode "Midnight Neon" UI theme, live score tracking, and clean OOP architecture.
-
----
+A professional-grade, fully object-oriented Tic-Tac-Toe game built with **Java Swing**, featuring a custom premium "Wood-Finish" UI theme, persistent score tracking, and scalable matrix grids.
 
 ## ✨ Features
 
 | Feature | Details |
-|---|---|
-| 🎨 Dark Mode UI | Custom "Midnight Neon" palette — deep navy background, cyan X, amber O |
-| 📊 Score Tracker | Persistent win counters for both players across multiple rounds |
-| 🔄 Reset Button | Start a new game at any time without closing the app |
-| 💡 Turn Indicator | Glowing dot highlights the active player in the score panel |
-| 🏆 Win Detection | Checks all 8 winning lines (3 rows, 3 cols, 2 diagonals) |
-| ✋ Draw Detection | Announces a stalemate when the board fills with no winner |
-| 🖱️ Hover Effects | Cells brighten on mouse hover for tactile feedback |
-
----
+| :--- | :--- |
+| 🪵 **Wood-Finish UI** | Custom "Warm Oak" palette — rich wood-tone backgrounds, ivory X, and mahogany O markers. |
+| 📊 **Score Tracker** | Persistent win counters for both players across multiple rounds. |
+| 🔄 **Reset Button** | Start a new game at any time without closing the app. |
+| 📐 **Scalable Grids** | Dynamic board generation supporting 3x3, 5x5, and 7x7 matrix layouts. |
+| 🏆 **Win Detection** | Checks all winning lines across variable board dimensions. |
+| ✋ **Draw Detection** | Announces a stalemate when the board fills with no winner. |
+| 🖱️ **Hover Effects** | Cells react on mouse hover for tactile feedback. |
 
 ## 🏗️ Architecture
 
 The project follows clean OOP separation of concerns across three classes:
 
-```
+```text
 src/
 ├── Main.java       # Entry point — launches the EDT and creates GameUI
-├── GameLogic.java  # Pure game engine: board state, rules, win/draw logic
+├── GameLogic.java  # Pure game engine: board state, matrix rules, win/draw logic
 └── GameUI.java     # All Swing components, event handling, visual feedback
-```
 
 ### Class Responsibilities
 
-**`GameLogic`** — knows nothing about Swing.  
-Manages the 9-cell board array, validates moves, checks win conditions against all 8 possible lines, detects draws, and tracks cumulative scores. Can be unit-tested independently.
+GameLogic — knows nothing about Swing.
+Manages the multidimensional board array, validates moves, checks win conditions for variable grid sizes, detects draws, and tracks cumulative scores. Can be unit-tested independently.
 
-**`GameUI`** — knows nothing about game rules.  
-Builds the JFrame hierarchy (title bar → score panel + grid → status bar), handles button clicks, delegates to `GameLogic`, and reflects results back through labels, colors, and repaints.
+GameUI — knows nothing about game rules.
+Builds the JFrame hierarchy (title bar → score panel + grid → status bar), handles button clicks, delegates to GameLogic, and reflects results back through custom labels and repaints.
 
-**`Main`** — five lines.  
-Schedules `GameUI` creation on the Swing Event Dispatch Thread using `SwingUtilities.invokeLater()`.
+Main — five lines.
+Schedules GameUI creation on the Swing Event Dispatch Thread using SwingUtilities.invokeLater()
 
----
-
-## 🔍 Win Detection Logic (explained)
-
-The board is stored as a flat `char[9]` array indexed like this:
+🔍 Win Detection Logic (explained)
+The board is stored as a dynamic char[][] array. After every move, checkWin() iterates over all possible winning lines and returns true the moment it finds a completed sequence where all cells are equal and non-empty
 
 ```
 0 | 1 | 2
@@ -68,44 +60,28 @@ After every move, `checkWin()` iterates over all 8 and returns `true` the moment
 
 ---
 
-## 🚀 How to Run in VS Code
+.
 
-### Prerequisites
-- Java Development Kit (JDK) 11 or higher
-- VS Code with the **Extension Pack for Java** installed
+🚀 How to Run in VS Code
+Prerequisites
+Java Development Kit (JDK) 11 or higher
 
-### Steps
+VS Code with the Extension Pack for Java installed
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/tic-tac-toe-java.git
-   cd tic-tac-toe-java
-   ```
+Steps
+Clone the repository
+git clone https://github.com/ishmal-codes/Tic-Tac-Toe-Project.git
+cd Tic-Tac-Toe-Project
 
-2. **Open in VS Code**
-   ```bash
-   code .
-   ```
+Open in VS Code
+code .
 
-3. **Run from the terminal**
-   ```bash
-   # Compile all three source files
+Run from the terminal
+
+# Compile all source files
    javac src/*.java -d out
-
    # Run the Main class
    java -cp out Main
-   ```
-
-   Or simply open `Main.java` in VS Code and click the **▷ Run** button that appears above the `main` method.
-
-### Running without VS Code (plain terminal)
-```bash
-mkdir -p out
-javac src/GameLogic.java src/GameUI.java src/Main.java -d out
-java -cp out Main
-```
-
----
 
 ## 📸 UI Overview
 
@@ -128,12 +104,14 @@ java -cp out Main
 
 ---
 
-## 🛠️ Tech Stack
+🛠️ Tech Stack
+Language: Java 11+
 
-- **Language:** Java 11+
-- **GUI Framework:** Java Swing (javax.swing)
-- **Build:** Plain `javac` — no Maven/Gradle required
-- **Lines of code:** ~350
+GUI Framework: Java Swing (javax.swing)
+
+Build: Plain javac — no Maven/Gradle required
+
+Lines of code: ~350
 
 ---
 
