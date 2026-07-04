@@ -9,6 +9,8 @@ public class GameLogic {
     private boolean gameOver;
     private String gameResult;
     private String player1Name = "Player 1";
+    private String player2Name = "Player 2";
+    private String difficulty = "MEDIUM"; // EASY, MEDIUM, HARD
 
     public GameLogic() {
         initGame(3, false);
@@ -41,6 +43,33 @@ public class GameLogic {
         return this.player1Name;
     }
 
+    public void setPlayer2Name(String name) {
+        if (name != null && !name.trim().isEmpty()) {
+            this.player2Name = name;
+        } else {
+            this.player2Name = "Player 2";
+        }
+    }
+
+    public String getPlayer2Name() {
+        return this.player2Name;
+    }
+
+    public void setDifficulty(String difficulty) {
+        if (difficulty != null &&
+            (difficulty.equalsIgnoreCase("EASY") ||
+             difficulty.equalsIgnoreCase("MEDIUM") ||
+             difficulty.equalsIgnoreCase("HARD"))) {
+            this.difficulty = difficulty.toUpperCase();
+        } else {
+            this.difficulty = "MEDIUM";
+        }
+    }
+
+    public String getDifficulty() {
+        return this.difficulty;
+    }
+
     public boolean makeMove(int row, int col) {
         if (row < 0 || row >= gridSize || col < 0 || col >= gridSize || board[row][col] != ' ' || gameOver) {
             return false;
@@ -64,8 +93,18 @@ public class GameLogic {
     private void makeAIMove() {
         if (gameOver) return;
 
-        // COMPETITIVE MIX LOGIC: 50% chances hain ke AI akalmandi se khelega, aur 50% random taake mix match ho
-        boolean playSmart = Math.random() < 0.50;
+        // DIFFICULTY LOGIC:
+        // EASY   -> AI hamesha random khelay ga (no smart moves)
+        // MEDIUM -> COMPETITIVE MIX: 50% chances hain ke AI akalmandi se khelega, aur 50% random taake mix match ho
+        // HARD   -> AI hamesha akalmandi se khelay ga (win/block priority)
+        boolean playSmart;
+        if ("EASY".equalsIgnoreCase(difficulty)) {
+            playSmart = false;
+        } else if ("HARD".equalsIgnoreCase(difficulty)) {
+            playSmart = true;
+        } else {
+            playSmart = Math.random() < 0.50;
+        }
 
         if (playSmart) {
             // Smart Decision 1: Agar AI khud kahin se jeet raha hai to furan wahan 'O' rakh kar match khatam kare
@@ -131,8 +170,8 @@ public class GameLogic {
             gameResult = player1Name.toUpperCase() + " WINS!!!";
         } else if (checkWin('O')) {
             gameOver = true;
-            // AI wins ko hamesha ke liye hata kar PLAYER 2 WINS kar diya
-            gameResult = "PLAYER 2 WINS!!!"; 
+            // Player 2 (ya AI, jiska default naam "Player 2" hai) ka custom naam yahan show hoga
+            gameResult = player2Name.toUpperCase() + " WINS!!!";
         } else if (isBoardFull()) {
             gameOver = true;
             gameResult = "IT'S A DRAW!!!";

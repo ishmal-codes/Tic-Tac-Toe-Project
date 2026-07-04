@@ -111,9 +111,7 @@ public class GameUI extends JFrame {
         });
 
         twoPlayerBtn.addActionListener(e -> {
-            gameLogic.setPlayer1Name("Player 1");
-            gameLogic.initGame(3, false); 
-            cardLayout.show(mainPanel, "GRID_SELECT");
+            showTwoPlayerNameInputDialog();
         });
 
         panel.add(Box.createVerticalStrut(100));
@@ -126,12 +124,7 @@ public class GameUI extends JFrame {
         return panel;
     }
 
-    private void showCustomNameInputDialog() {
-        JDialog dialog = new JDialog(this, "Player Identification", true);
-        dialog.setUndecorated(true); 
-        dialog.setSize(420, 240);
-        dialog.setLocationRelativeTo(this);
-
+    private JPanel createWoodDialogContentPanel(int width, int height) {
         JPanel content = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -144,21 +137,93 @@ public class GameUI extends JFrame {
             }
         };
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+        content.setPreferredSize(new Dimension(width, height));
+        return content;
+    }
 
-        JLabel promptLabel = new JLabel("ENTER YOUR NAME:", SwingConstants.CENTER);
-        promptLabel.setFont(new Font("Serif", Font.BOLD, 22));
-        promptLabel.setForeground(WOOD_TEXT);
-        promptLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    private JLabel createWoodDialogLabel(String text, int fontSize) {
+        JLabel label = new JLabel(text, SwingConstants.CENTER);
+        label.setFont(new Font("Serif", Font.BOLD, fontSize));
+        label.setForeground(WOOD_TEXT);
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+        return label;
+    }
 
-        JTextField nameField = new JTextField(15);
-        nameField.setMaximumSize(new Dimension(300, 42));
-        nameField.setFont(new Font("Serif", Font.PLAIN, 20));
-        nameField.setBackground(new Color(45, 22, 8)); 
-        nameField.setForeground(WOOD_TEXT);
-        nameField.setCaretColor(WOOD_TEXT);
-        nameField.setHorizontalAlignment(JTextField.CENTER);
-        nameField.setBorder(BorderFactory.createLineBorder(WOOD_LIGHT, 2));
-        nameField.setAlignmentX(Component.CENTER_ALIGNMENT);
+    private JTextField createWoodTextField() {
+        JTextField field = new JTextField(15);
+        field.setMaximumSize(new Dimension(300, 42));
+        field.setFont(new Font("Serif", Font.PLAIN, 20));
+        field.setBackground(new Color(45, 22, 8));
+        field.setForeground(WOOD_TEXT);
+        field.setCaretColor(WOOD_TEXT);
+        field.setHorizontalAlignment(JTextField.CENTER);
+        field.setBorder(BorderFactory.createLineBorder(WOOD_LIGHT, 2));
+        field.setAlignmentX(Component.CENTER_ALIGNMENT);
+        return field;
+    }
+
+    private void showTwoPlayerNameInputDialog() {
+        JDialog dialog = new JDialog(this, "Player Setup", true);
+        dialog.setUndecorated(true);
+        dialog.setSize(420, 340);
+        dialog.setLocationRelativeTo(this);
+
+        JPanel content = createWoodDialogContentPanel(420, 340);
+
+        JLabel promptLabel1 = createWoodDialogLabel("ENTER PLAYER 1 NAME:", 20);
+        JTextField p1Field = createWoodTextField();
+
+        JLabel promptLabel2 = createWoodDialogLabel("ENTER PLAYER 2 NAME:", 20);
+        JTextField p2Field = createWoodTextField();
+
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        btnPanel.setOpaque(false);
+
+        JButton okBtn = createWoodButton("OK");
+        JButton cancelBtn = createWoodButton("CANCEL");
+        okBtn.setPreferredSize(new Dimension(140, 48));
+        cancelBtn.setPreferredSize(new Dimension(140, 48));
+
+        okBtn.addActionListener(e -> {
+            String p1Name = p1Field.getText().trim();
+            String p2Name = p2Field.getText().trim();
+            gameLogic.setPlayer1Name(p1Name.isEmpty() ? "Player 1" : p1Name);
+            gameLogic.setPlayer2Name(p2Name.isEmpty() ? "Player 2" : p2Name);
+            gameLogic.initGame(3, false);
+            dialog.dispose();
+            cardLayout.show(mainPanel, "GRID_SELECT");
+        });
+
+        cancelBtn.addActionListener(e -> dialog.dispose());
+
+        btnPanel.add(okBtn);
+        btnPanel.add(cancelBtn);
+
+        content.add(Box.createVerticalStrut(25));
+        content.add(promptLabel1);
+        content.add(Box.createVerticalStrut(12));
+        content.add(p1Field);
+        content.add(Box.createVerticalStrut(20));
+        content.add(promptLabel2);
+        content.add(Box.createVerticalStrut(12));
+        content.add(p2Field);
+        content.add(Box.createVerticalStrut(25));
+        content.add(btnPanel);
+
+        dialog.add(content);
+        dialog.setVisible(true);
+    }
+
+    private void showCustomNameInputDialog() {
+        JDialog dialog = new JDialog(this, "Player Identification", true);
+        dialog.setUndecorated(true); 
+        dialog.setSize(420, 240);
+        dialog.setLocationRelativeTo(this);
+
+        JPanel content = createWoodDialogContentPanel(420, 240);
+
+        JLabel promptLabel = createWoodDialogLabel("ENTER YOUR NAME:", 22);
+        JTextField nameField = createWoodTextField();
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
         btnPanel.setOpaque(false);
@@ -234,9 +299,66 @@ public class GameUI extends JFrame {
 
     private void launchGameWithGrid(int size) {
         // Yeh line ab gameLogic ke current setup se perfectly aligned hai
-        gameLogic.initGame(size, gameLogic.isSinglePlayer()); 
+        gameLogic.initGame(size, gameLogic.isSinglePlayer());
+
+        // Agar Single Player mode hai to grid choose hotay hi AI Difficulty poochni hai
+        if (gameLogic.isSinglePlayer()) {
+            showDifficultySelectionDialog();
+        }
+
         buildDynamicGameplayGrid(size);
         cardLayout.show(mainPanel, "GAMEPLAY");
+    }
+
+    private void showDifficultySelectionDialog() {
+        JDialog dialog = new JDialog(this, "Difficulty Selection", true);
+        dialog.setUndecorated(true);
+        dialog.setSize(420, 320);
+        dialog.setLocationRelativeTo(this);
+
+        JPanel content = createWoodDialogContentPanel(420, 320);
+
+        JLabel promptLabel = createWoodDialogLabel("SELECT AI DIFFICULTY:", 22);
+
+        JButton easyBtn = createWoodButton("Easy");
+        JButton mediumBtn = createWoodButton("Medium");
+        JButton hardBtn = createWoodButton("Hard");
+
+        Dimension btnSize = new Dimension(220, 55);
+        easyBtn.setMaximumSize(btnSize);
+        mediumBtn.setMaximumSize(btnSize);
+        hardBtn.setMaximumSize(btnSize);
+        easyBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        mediumBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        hardBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        easyBtn.addActionListener(e -> {
+            gameLogic.setDifficulty("EASY");
+            dialog.dispose();
+        });
+        mediumBtn.addActionListener(e -> {
+            gameLogic.setDifficulty("MEDIUM");
+            dialog.dispose();
+        });
+        hardBtn.addActionListener(e -> {
+            gameLogic.setDifficulty("HARD");
+            dialog.dispose();
+        });
+
+        content.add(Box.createVerticalStrut(25));
+        content.add(promptLabel);
+        content.add(Box.createVerticalStrut(20));
+        content.add(easyBtn);
+        content.add(Box.createVerticalStrut(15));
+        content.add(mediumBtn);
+        content.add(Box.createVerticalStrut(15));
+        content.add(hardBtn);
+        content.add(Box.createVerticalStrut(20));
+
+        dialog.add(content);
+        // Default rahega Medium agar dialog kisi tarah bina button click ke close ho jaye
+        gameLogic.setDifficulty("MEDIUM");
+        dialog.setVisible(true);
     }
 
     private JPanel createGameplayScreen() {
@@ -320,7 +442,7 @@ public class GameUI extends JFrame {
         if (gameLogic.isGameOver()) {
             statusLabel.setText("Match Settled!");
         } else {
-            statusLabel.setText(gameLogic.isPlayerXTurn() ? gameLogic.getPlayer1Name() + "'s Turn" : "Player 2's Turn");
+            statusLabel.setText(gameLogic.isPlayerXTurn() ? gameLogic.getPlayer1Name() + "'s Turn" : gameLogic.getPlayer2Name() + "'s Turn");
         }
     }
 
